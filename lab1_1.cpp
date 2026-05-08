@@ -62,6 +62,28 @@ int *cache2(int n,int** A,int* b)
     return sum;
 }
 
+int *cache3(int n,int** A,int* b)
+{
+    int *sum=new int[n];
+    for(int c=0;c<n;c+=16)
+    {
+        int li=(c+16<n)?c+16:n;
+        for(int i=c;i<li;i++)
+        {
+            sum[i]=0;
+        }
+        for(int i=0;i<n;i++)
+        {
+            int bi=b[i];
+            for(int j=c;j<li;j++)
+            {
+                sum[j]+=A[i][j]*bi;
+            }
+        }
+    }
+    return sum;
+}
+
 // 修改后的计时函数 - 使用 chrono
 void printmatrixcache1(int *b,int n,int** A)
 {
@@ -83,6 +105,18 @@ void printmatrixcache2(int *b,int n,int** A)
     
     auto duration = duration_cast<microseconds>(end - start);
     cout << "cache2(8) Col: " << duration.count() / 1000.0 << " ms" << endl;
+    
+    delete[] sum;
+}
+
+void printmatrixcache3(int *b,int n,int** A)
+{
+    auto start = high_resolution_clock::now();
+    int *sum = cache3(n,A,b);
+    auto end = high_resolution_clock::now();
+    
+    auto duration = duration_cast<microseconds>(end - start);
+    cout << "cache2(16) Col: " << duration.count() / 1000.0 << " ms" << endl;
     
     delete[] sum;
 }
@@ -118,6 +152,7 @@ int main()
     printmatrixnormal(b,n,A);
     printmatrixcache1(b,n,A);
     printmatrixcache2(b,n,A);
+    printmatrixcache3(b,n,A);
     
     // 释放内存
     for(int i=0;i<n;i++) {
